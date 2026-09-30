@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin Control - Anushka Decor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0f2027;
+            --secondary-blue: #203a43;
+            --accent-gold: #f4c430;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --radius: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .admin-brand h2 { color: var(--accent-gold); font-size: 1.4rem; font-weight: 700; }
+        .admin-brand span { font-size: 0.75rem; color: var(--text-muted); display: block; }
+        
+        .admin-menu { list-style: none; margin-top: 25px; }
+        .admin-menu li { margin-bottom: 8px; }
+        .admin-menu a {
+            color: #cbd5e1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 12px;
+            border-radius: var(--radius);
+            transition: 0.3s;
+            font-size: 0.88rem;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: var(--accent-gold);
+        }
+
+        /* Main Content */
+        main { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 18px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        .admin-header h1 { font-size: 1.5rem; color: var(--primary-blue); }
+
+        .panel-section {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        .panel-section h2 { font-size: 1.2rem; color: var(--primary-blue); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px; color: var(--text-dark); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary-blue); }
+
+        .btn {
+            background: var(--primary-blue);
+            color: var(--accent-gold);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #162e38; }
+        .btn-danger { background: var(--danger); color: var(--white); padding: 6px 12px; font-size: 0.8rem; }
+        .btn-danger:hover { background: #dc2626; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th, table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+        table th { background: #f1f5f9; color: var(--primary-blue); }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: none;
+            padding: 10px;
+            border-radius: var(--radius);
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .logout-btn:hover { background: var(--danger); color: var(--white); }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; position: relative; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div>
+            <div class="admin-brand">
+                <h2>Anushka Decor</h2>
+                <span>Full Control Master Panel</span>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="#business" class="active"><i class="fas fa-store"></i> Business & Address</a></li>
+                <li><a href="#prices"><i class="fas fa-tags"></i> All Product Prices</a></li>
+                <li><a href="#catalogs"><i class="fas fa-book-open"></i> Wallpaper Catalogs</a></li>
+                <li><a href="#pvc"><i class="fas fa-layer-group"></i> PVC Panels</a></li>
+                <li><a href="#rods"><i class="fas fa-bars"></i> Curtain Rods</a></li>
+                <li><a href="#films"><i class="fas fa-film"></i> Glass & Sun Films</a></li>
+                <li><a href="#murals"><i class="fas fa-image"></i> 3D / 5D Murals</a></li>
+                <li><a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Live Site</a></li>
+            </ul>
+        </div>
+        <button class="logout-btn" onclick="alert('Session closed.')"><i class="fas fa-sign-out-alt"></i> Exit Panel</button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+        <div class="admin-header">
+            <h1>Master Admin Dashboard, Vijay! ⚡</h1>
+            <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fas fa-unlock-alt"></i> Full Control Enabled</span>
+        </div>
+
+        <!-- 1. Business & Address Editor -->
+        <div id="business" class="panel-section">
+            <h2><span><i class="fas fa-map-marker-alt"></i> Business Info & Address Settings</span></h2>
+            <form id="businessForm" onsubmit="saveBusinessInfo(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Business Name:</label>
+                        <input type="text" id="bName" value="Anushka Decor" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Primary Phone Number:</label>
+                        <input type="text" id="bPhone1" value="+91 9939664712" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Secondary Phone Number:</label>
+                        <input type="text" id="bPhone2" value="+91 8235088727" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address:</label>
+                        <input type="email" id="bEmail" value="vijay99396647@gmail.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Store Complete Address:</label>
+                    <input type="text" id="bAddress" value="H/18, Sangam Vihar, Near Tiranga Chowk, South Delhi - 110080" required>
+                </div>
+                <div class="form-group">
+                    <label>Store Timings:</label>
+                    <input type="text" id="bTiming" value="10:00 AM – 9:30 PM (Monday to Saturday)" required>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-save"></i> Save Business Details</button>
+            </form>
+        </div>
+
+        <!-- 2. All Product Prices Manager -->
+        <div id="prices" class="panel-section">
+            <h2><span><i class="fas fa-tags"></i> Product Price Range Manager</span></h2>
+            <form id="priceForm" onsubmit="saveProductPrice(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Product / Category Name:</label>
+                        <input type="text" id="pCategoryName" placeholder="e.g. PVC Louvers Panel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price Range / Rate:</label>
+                        <input type="text" id="pCategoryPrice" placeholder="e.g. ₹50 - ₹120 / Sq.Ft." required>
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Add / Update Price</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product / Category</th>
+                        <th>Price Range</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="priceTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 3. Wallpaper Catalogs & Drive PDFs -->
+        <div id="catalogs" class="panel-section">
+            <h2><span><i class="fas fa-book-open"></i> Wallpaper Catalogs & Drive PDFs</span></h2>
+            <form id="catalogForm" onsubmit="addDynamicItem('catalogsData', event, 'catCollection', 'catTitle', 'catLink')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category:</label>
+                        <select id="catCollection" required>
+                            <option value="royal">Royal Damask</option>
+                            <option value="raised">Raised 3D Patterns</option>
+                            <option value="modern">Modern Patterns</option>
+                            <option value="kids">Kids Special</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Volume / Title:</label>
+                        <input type="text" id="catTitle" placeholder="e.g. Beyond Vol-1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Google Drive Shareable Link:</label>
+                    <input type="url" id="catLink" placeholder="https://drive.google.com/..." required>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-link"></i> Add Wallpaper PDF</button>
+            </form>
+            <table>
+                <thead>
+                    <tr><th>Category</th><th>Title</th><th>Drive Link</th><th>Action</th></tr>
+                </thead>
+                <tbody id="catalogsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 4. PVC Panels Manager -->
+        <div id="pvc" class="panel-section">
+            <h2><span><i class="fas fa-layer-group"></i> PVC Panels & Louvers Catalogs / Rates</span></h2>
+            <form onsubmit="addDynamicItem('pvcData', event, 'pvcTitle', 'pvcPrice', 'pvcLink')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Panel Type / Name:</label>
+                        <input type="text" id="pvcTitle" placeholder="e.g. Charcoal Louvers Panel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate / Price:</label>
+                        <input type="text" id="pvcPrice" placeholder="e.g. ₹65 / Sq.Ft." required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Google Drive PDF Link (Catalog):</label>
+                    <input type="url" id="pvcLink" placeholder="https://drive.google.com/..." required>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add PVC Panel Item</button>
+            </form>
+            <table>
+                <thead>
+                    <tr><th>Panel Name</th><th>Rate</th><th>Drive Link</th><th>Action</th></tr>
+                </thead>
+                <tbody id="pvcTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 5. Curtain Rods Manager -->
+        <div id="rods" class="panel-section">
+            <h2><span><i class="fas fa-bars"></i> Curtain Rods & Channels Manager</span></h2>
+            <form onsubmit="addDynamicItem('rodsData', event, 'rodTitle', 'rodPrice', 'rodLink')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Rod / Finial Name:</label>
+                        <input type="text" id="rodTitle" placeholder="e.g. Matte Black Heavy Rod" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price / Unit:</label>
+                        <input type="text" id="rodPrice" placeholder="e.g. ₹450 / Feet" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Google Drive PDF Link (Optional):</label>
+                    <input type="url" id="rodLink" placeholder="https://drive.google.com/...">
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Curtain Rod Item</button>
+            </form>
+            <table>
+                <thead>
+                    <tr><th>Item Name</th><th>Price</th><th>Catalog Link</th><th>Action</th></tr>
+                </thead>
+                <tbody id="rodsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 6. Glass & Sun Control Films -->
+        <div id="films" class="panel-section">
+            <h2><span><i class="fas fa-film"></i> Frosted & Glass Film Manager</span></h2>
+            <form onsubmit="addDynamicItem('filmsData', event, 'filmTitle', 'filmPrice', 'filmLink')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Film Design Name:</label>
+                        <input type="text" id="filmTitle" placeholder="e.g. Designer Frosted Glass Film" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate / Price:</label>
+                        <input type="text" id="filmPrice" placeholder="e.g. ₹35 / Sq.Ft." required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Google Drive PDF Link (Optional):</label>
+                    <input type="url" id="filmLink" placeholder="https://drive.google.com/...">
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Glass Film Item</button>
+            </form>
+            <table>
+                <thead>
+                    <tr><th>Film Name</th><th>Rate</th><th>Catalog Link</th><th>Action</th></tr>
+                </thead>
+                <tbody id="filmsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 7. 3D / 5D Murals Manager -->
+        <div id="murals" class="panel-section">
+            <h2><span><i class="fas fa-image"></i> Custom 3D / 5D Murals Manager</span></h2>
+            <form onsubmit="addDynamicItem('muralsData', event, 'muralTitle', 'muralPrice', 'muralLink')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mural Category / Theme:</label>
+                        <input type="text" id="muralTitle" placeholder="e.g. Spiritual / Nature Landscape" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate Per Sq.Ft.:</label>
+                        <input type="text" id="muralPrice" placeholder="e.g. ₹90 - ₹150 / Sq.Ft." required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Google Drive PDF Link (Catalog):</label>
+                    <input type="url" id="muralLink" placeholder="https://drive.google.com/..." required>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Mural Catalog</button>
+            </form>
+            <table>
+                <thead>
+                    <tr><th>Theme / Title</th><th>Rate</th><th>Drive Link</th><th>Action</th></tr>
+                </thead>
+                <tbody id="muralsTableBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // --- Business Info Logic ---
+        function saveBusinessInfo(e) {
+            e.preventDefault();
+            const businessData = {
+                name: document.getElementById('bName').value,
+                phone1: document.getElementById('bPhone1').value,
+                phone2: document.getElementById('bPhone2').value,
+                email: document.getElementById('bEmail').value,
+                address: document.getElementById('bAddress').value,
+                timing: document.getElementById('bTiming').value
+            };
+            localStorage.setItem('anushkaBusiness', JSON.stringify(businessData));
+            alert('Business details successfully update ho gayi hain!');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedBiz = JSON.parse(localStorage.getItem('anushkaBusiness'));
+            if(savedBiz) {
+                document.getElementById('bName').value = savedBiz.name || '';
+                document.getElementById('bPhone1').value = savedBiz.phone1 || '';
+                document.getElementById('bPhone2').value = savedBiz.phone2 || '';
+                document.getElementById('bEmail').value = savedBiz.email || '';
+                document.getElementById('bAddress').value = savedBiz.address || '';
+                document.getElementById('bTiming').value = savedBiz.timing || '';
+            }
+            renderPrices();
+            renderAllSections();
+        });
+
+        // --- Price Manager Logic ---
+        let productPrices = JSON.parse(localStorage.getItem('anushkaPrices')) || [
+            { name: 'Royal Damask Wallpaper', price: '₹1800 - ₹2500 / Roll' },
+            { name: 'PVC Louvers & Panels', price: '₹60 - ₹130 / Sq.Ft.' },
+            { name: 'Curtain Rods & Channels', price: '₹350 - ₹600 / Feet' },
+            { name: 'Frosted Glass Films', price: '₹35 - ₹70 / Sq.Ft.' },
+            { name: 'Custom 3D / 5D Murals', price: '₹90 - ₹150 / Sq.Ft.' }
+        ];
+
+        function renderPrices() {
+            const tbody = document.getElementById('priceTableBody');
+            tbody.innerHTML = '';
+            productPrices.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${item.name}</b></td>
+                        <td>${item.price}</td>
+                        <td><button class="btn btn-danger" onclick="deletePrice(${index})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+            localStorage.setItem('anushkaPrices', JSON.stringify(productPrices));
+        }
+
+        function saveProductPrice(e) {
+            e.preventDefault();
+            const name = document.getElementById('pCategoryName').value;
+            const price = document.getElementById('pCategoryPrice').value;
+            productPrices.push({ name, price });
+            renderPrices();
+            document.getElementById('priceForm').reset();
+            alert('Price successfully update ho gaya!');
+        }
+
+        function deletePrice(index) {
+            if(confirm('Aap is price item ko delete karna chahte hain?')) {
+                productPrices.splice(index, 1);
+                renderPrices();
+            }
+        }
+
+        // --- Generic Dynamic Section Handler (PVC, Rods, Films, Murals, Catalogs) ---
+        function getStorageData(key) {
+            return JSON.parse(localStorage.getItem(key)) || [];
+        }
+
+        function renderAllSections() {
+            renderTable('catalogsData', 'catalogsTableBody', ['col', 'title', 'link']);
+            renderTable('pvcData', 'pvcTableBody', ['title', 'price', 'link']);
+            renderTable('rodsData', 'rodsTableBody', ['title', 'price', 'link']);
+            renderTable('filmsData', 'filmsTableBody', ['title', 'price', 'link']);
+            renderTable('muralsData', 'muralsTableBody', ['title', 'price', 'link']);
+        }
+
+        function renderTable(storageKey, tableBodyId, fields) {
+            const tbody = document.getElementById(tableBodyId);
+            if(!tbody) return;
+            const data = getStorageData(storageKey);
+            tbody.innerHTML = '';
+            data.forEach((item, index) => {
+                let linkHtml = item.link ? `<a href="${item.link}" target="_blank" style="color:#0284c7;">View Link</a>` : 'N/A';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${item[fields[0]] ? item[fields[0]].toUpperCase() : ''}</b></td>
+                        <td>${item[fields[1]] || ''}</td>
+                        <td>${linkHtml}</td>
+                        <td><button class="btn btn-danger" onclick="deleteDynamicItem('${storageKey}', ${index})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function addDynamicItem(storageKey, e, f1, f2, f3) {
+            e.preventDefault();
+            const val1 = document.getElementById(f1).value;
+            const val2 = document.getElementById(f2) ? document.getElementById(f2).value : '';
+            const val3 = document.getElementById(f3) ? document.getElementById(f3).value : '';
+
+            let data = getStorageData(storageKey);
+            data.push({ col: val1, title: val1, price: val2, link: val3 });
+            localStorage.setItem(storageKey, JSON.stringify(data));
+            
+            renderAllSections();
+            e.target.reset();
+            alert('Data safalpurvak jodh diya gaya hai!');
+        }
+
+        function deleteDynamicItem(storageKey, index) {
+            if(confirm('Kya aap ise delete karna chahte hain?')) {
+                let data = getStorageData(storageKey);
+                data.splice(index, 1);
+                localStorage.setItem(storageKey, JSON.stringify(data));
+                renderAllSections();
+            }
+        }
+    </script>
+</body>
+</html>
